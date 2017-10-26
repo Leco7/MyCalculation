@@ -41,11 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
     private String dados = "";
     private String historico ="";
-
-
+    
     private List<Double> numeros;
     private List<String> operadores;
-
 
 
     private boolean somaAtivada = false;
