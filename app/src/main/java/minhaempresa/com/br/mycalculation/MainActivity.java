@@ -129,11 +129,6 @@ public class MainActivity extends AppCompatActivity {
                 porcentAtivada = true;
                 atualizaVisor();
 
-
-
-               /* atualizaVisor();
-                reiniciaTeclasAtivadas();
-                reiniciaVirgula();*/
             }
         });
 
@@ -572,21 +567,6 @@ public class MainActivity extends AppCompatActivity {
             reiniciaTeclasAtivadas();
 
         }
-        //     return false;
-
-        /*if(dados.isEmpty() || divAtivada || multipAtivada || somaAtivada || subAtivada){
-            dados += "0,";
-        }
-        if(!virgAtivada && !dados.isEmpty()){
-            if(divAtivada || multipAtivada || somaAtivada || subAtivada){
-                dados += "0,";
-                return false;
-            }else{
-                return true;
-            }
-
-        }
-        return false;*/
     }
 
     //está vazio    está ativada    não tem sinal ativo
@@ -601,9 +581,6 @@ public class MainActivity extends AppCompatActivity {
     private void pegaPorcentagem() {
         double num1 = Double.valueOf(dados);
     }
-
-
-
 
 
     /*
