@@ -9,10 +9,31 @@
     android:background="@color/LightYellowBackGround"
     tools:context="minhaempresa.com.br.mycalculation.MainActivityAnt">
 
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/historico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:ems="10"
+            android:gravity="right"
+            android:text="0"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="30sp" />
+    </ScrollView>
+
     <TextView
         android:id="@+id/txtVisor"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -252,5 +273,4 @@
 
 
     </LinearLayout>
-
 </LinearLayout>
