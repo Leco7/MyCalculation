@@ -17,7 +17,7 @@ import java.util.List;
 *
              * FORMATAR OS NUMEROS QUESTÃO VIRGULA                  OK
 *
-               * IMPLEMENTAR O PERCENT
+               * IMPLEMENTAR O PERCENT                              OK
 *
               * VERIFICAR DIVISÃO POR ZERO                          OK
 *
@@ -36,12 +36,14 @@ public class MainActivity extends AppCompatActivity {
     public static final String OPER_SUB = "-";
     public static final String OPER_MULT = "X";
     public static final String OPER_DIV = "÷";
+    public static final String OPER_PORCENTAGEM = "%";
     private Button btnC, btnMaisMenos, btnPorcent, btn9, btn8, btn7, btn6, btn5, btn4, btn3, btn2, btn1, btn0, btnDiv, btnMult, btnSoma, btnSub, btnIgual, btnVirg;
     private TextView txtVisor;
 
     private String dados = "";
     private String historico ="";
-    
+
+
     private List<Double> numeros;
     private List<String> operadores;
 
@@ -51,8 +53,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean multipAtivada = false;
     private boolean divAtivada = false;
     private boolean virgAtivada = false;
+    private boolean porcentAtivada = false;
 
     private boolean erro = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,10 +119,21 @@ public class MainActivity extends AppCompatActivity {
         btnPorcent.setOnClickListener(new View.OnClickListener() {                                  //PORCENT
             @Override
             public void onClick(View v) {
-                pegaPorcentagem();
-                atualizaVisor();
+
+                substituiVirOper();
+
+                atualizaSinaisAtivos();
+                dados += OPER_PORCENTAGEM;
                 reiniciaTeclasAtivadas();
                 reiniciaVirgula();
+                porcentAtivada = true;
+                atualizaVisor();
+
+
+
+               /* atualizaVisor();
+                reiniciaTeclasAtivadas();
+                reiniciaVirgula();*/
             }
         });
 
@@ -159,9 +174,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
         btnSoma.setOnClickListener(new View.OnClickListener() {                                     //SOMA
             @Override
             public void onClick(View v) {
@@ -175,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
                     reiniciaVirgula();
                     somaAtivada = true;
                     atualizaVisor();
-
                 }
             }
         });
@@ -193,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
                     reiniciaVirgula();
                     subAtivada = true;
                     atualizaVisor();
-
                 }
             }
         });
@@ -205,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                DecimalFormat formata = new DecimalFormat("0.##");
+                DecimalFormat formata = new DecimalFormat("0.###");
 
                 String valorFormatado  = formata.format(iniciaCalculo(dados));
 
@@ -217,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                 atualizaVisor();
                 reiniciaTeclasAtivadas();
                 reiniciaVirgula();
-                //   dados = "";
+
 
             }
         });
@@ -250,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
                 dados += 1;
                 atualizaVisor();
                 reiniciaTeclasAtivadas();
+                
             }
         });
 
@@ -334,6 +345,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     private void substituiVirOper() {
         if(dados.charAt(dados.length()-1) == ','){
             dados = dados.substring(0, dados.length()-1);
@@ -408,7 +420,8 @@ public class MainActivity extends AppCompatActivity {
     * AO FINAL REALIZA A CONTA SE HOUVER DADOS SUFICIENTES
     * */
     private double iniciaCalculo(String conta){
-        String aux = "";
+        String numero = "";
+        String numeroAnterior = "";
         String oper = "";
         char c = 0;
         double numeroAdd = 0;
@@ -419,18 +432,26 @@ public class MainActivity extends AppCompatActivity {
             return 0;
         }
 
+        /*23 + 15 % = 26.45
+        23 + (15/100*23)    */
 
         for(int i = 0; i<conta.length(); i++){
             c = conta.charAt(i);
 
             if(Character.isDigit(c)){
-                aux += c;
+                numero += c;
 
             }else if(c == ','){
-                aux += ".";
+                numero += ".";
+            }else if(c == '%') {
+                if(!numeroAnterior.isEmpty()) {
+                    numero = calculaPorcentagem(numero, numeroAnterior);
+                    numeroAnterior = "";
+                }
             }else{
-                numeroAdd = Double.valueOf(aux);
-                aux = "";
+                numeroAnterior = numero;
+                numeroAdd = Double.valueOf(numero);
+                numero = "";
                 oper = String.valueOf(c);
 
 
@@ -439,8 +460,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if(!aux.isEmpty()) {
-            numeroAdd = Double.valueOf(aux);
+        if(!numero.isEmpty()) {
+            numeroAdd = Double.valueOf(numero);
             numeros.add(numeroAdd);
             if(numeros.size() == operadores.size()){
                 operadores.remove(operadores.size()-1);
@@ -455,11 +476,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    /*
+    * CALCULA PORCENTAGEM*/
+    private String calculaPorcentagem(String numero, String numeroAnterior) {
+        double numAtual = Double.valueOf(numero);
+        double numAnterior = Double.valueOf(numeroAnterior);
+        double res;
+        String operAtual = operadores.get(operadores.size()-1);
+
+        res = (numAtual/100);
+
+        if(operAtual.equals(OPER_SOMA) || operAtual.equals(OPER_SUB)){
+            res *= numAnterior;
+        }
+
+        //  100*2%=2
+        //100/2% = 5000
+
+        return String.valueOf(res);
+    }
+
     /*
     * APAGA OS SINAIS ATIVOS DE DADOS SE A VIRGULA NÃO ESTIVER ATIVADA
     */
     private void atualizaSinaisAtivos() {
-        if(divAtivada || subAtivada || multipAtivada || somaAtivada){
+        if(divAtivada || subAtivada || multipAtivada || somaAtivada || porcentAtivada){
             dados = dados.substring(0, dados.length()-1);
         }
 
@@ -507,6 +549,7 @@ public class MainActivity extends AppCompatActivity {
         multipAtivada = false;
         somaAtivada = false;
         subAtivada = false;
+        porcentAtivada = false;
 
     }
 
